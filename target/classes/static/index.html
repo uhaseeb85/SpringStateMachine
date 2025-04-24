@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IVR System Simulator</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Add DaisyUI (component library built on Tailwind) -->
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@3.5.0/dist/full.css" rel="stylesheet" type="text/css" />
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#4F46E5',
+                        secondary: '#10B981',
+                        accent: '#F59E0B',
+                        neutral: '#3D4451',
+                        'base-100': '#FFFFFF',
+                        error: '#EF4444',
+                    }
+                }
+            },
+            daisyui: {
+                themes: ["light"],
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <div class="container mx-auto px-4 py-8">
+        <div class="max-w-5xl mx-auto">
+            <!-- Main Card -->
+            <div class="card bg-white shadow-xl">
+                <div class="card-body p-0">
+                    <!-- Header -->
+                    <div class="bg-gradient-to-r from-primary to-indigo-700 text-white p-6 rounded-t-2xl">
+                        <h2 class="text-2xl font-bold flex items-center">
+                            <i class="fas fa-phone-alt mr-3"></i>Bank IVR System Simulator
+                        </h2>
+                        <p class="text-sm opacity-80 mt-1">Interactive Voice Response Simulation</p>
+                    </div>
+
+                    <div class="p-6">
+                        <!-- Session Information -->
+                        <div class="flex flex-wrap gap-4 mb-6 bg-gray-50 rounded-lg p-4 border border-gray-100">
+                            <div class="flex items-center">
+                                <i class="fas fa-fingerprint text-primary mr-2"></i>
+                                <span class="font-medium">Session ID:</span>
+                                <span id="session-id" class="ml-2 badge badge-neutral">Not Started</span>
+                            </div>
+                            <div class="flex items-center">
+                                <i class="fas fa-map-marker-alt text-primary mr-2"></i>
+                                <span class="font-medium">Current State:</span>
+                                <span id="current-state" class="ml-2 badge badge-primary">N/A</span>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 lg:grid-cols-5 gap-6">
+                            <!-- Phone Interface (Larger) -->
+                            <div class="lg:col-span-3">
+                                <div class="phone-container bg-gray-100 rounded-xl shadow-md overflow-hidden border border-gray-200">
+                                    <!-- Phone Display -->
+                                    <div class="bg-white p-6 rounded-t-lg shadow-sm relative">
+                                        <div class="h-2 w-1/2 absolute top-0 left-0 bg-gradient-to-r from-primary to-secondary rounded-br-lg"></div>
+                                        <h3 class="text-lg font-bold mb-4 flex items-center text-gray-700">
+                                            <i class="fas fa-comment-alt mr-2 text-primary"></i>IVR Dialog
+                                        </h3>
+                                        <div id="phone-display" class="bg-gray-50 p-5 rounded-lg border border-gray-200 min-h-[180px] shadow-inner">
+                                            <p id="prompt-message" class="text-lg text-gray-800">Press "Start Call" to begin</p>
+                                        </div>
+                                    </div>
+
+                                    <!-- User Input Section -->
+                                    <div id="input-section" class="p-5 hidden">
+                                        <div class="flex mb-4">
+                                            <input type="text" inputmode="numeric" pattern="[0-9]*" id="user-input" 
+                                                class="input input-bordered flex-grow mr-2" 
+                                                placeholder="Enter your response...">
+                                            <button id="submit-input" class="btn btn-primary">
+                                                <i class="fas fa-paper-plane mr-1"></i> Submit
+                                            </button>
+                                        </div>
+
+                                        <!-- Numeric Keypad -->
+                                        <div id="numeric-keypad" class="grid grid-cols-3 gap-2 max-w-xs mx-auto mb-6">
+                                            <button class="keypad-btn btn btn-circle btn-outline" data-value="1">1</button>
+                                            <button class="keypad-btn btn btn-circle btn-outline" data-value="2">2</button>
+                                            <button class="keypad-btn btn btn-circle btn-outline" data-value="3">3</button>
+                                            <button class="keypad-btn btn btn-circle btn-outline" data-value="4">4</button>
+                                            <button class="keypad-btn btn btn-circle btn-outline" data-value="5">5</button>
+                                            <button class="keypad-btn btn btn-circle btn-outline" data-value="6">6</button>
+                                            <button class="keypad-btn btn btn-circle btn-outline" data-value="7">7</button>
+                                            <button class="keypad-btn btn btn-circle btn-outline" data-value="8">8</button>
+                                            <button class="keypad-btn btn btn-circle btn-outline" data-value="9">9</button>
+                                            <button class="keypad-btn btn btn-circle btn-outline" data-value="*">*</button>
+                                            <button class="keypad-btn btn btn-circle btn-outline" data-value="0">0</button>
+                                            <button class="keypad-btn btn btn-circle btn-outline" data-value="#">#</button>
+                                        </div>
+
+                                        <!-- Dynamic Option Buttons -->
+                                        <div id="dynamic-buttons" class="flex flex-wrap justify-center gap-2 mb-4">
+                                            <!-- Buttons will be added dynamically -->
+                                        </div>
+                                    </div>
+
+                                    <!-- Action Buttons -->
+                                    <div class="p-5 bg-gray-50 border-t border-gray-200">
+                                        <div class="grid grid-cols-2 gap-4">
+                                            <button id="start-call-btn" class="btn btn-success">
+                                                <i class="fas fa-phone mr-2"></i> Start Call
+                                            </button>
+                                            <button id="end-call-btn" class="btn btn-error" disabled>
+                                                <i class="fas fa-phone-slash mr-2"></i> End Call
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Call History (Smaller) -->
+                            <div class="lg:col-span-2">
+                                <div class="bg-white rounded-xl shadow-md p-5 border border-gray-200 h-full">
+                                    <h3 class="text-lg font-bold mb-4 flex items-center text-gray-700">
+                                        <i class="fas fa-history mr-2 text-primary"></i>Call History
+                                    </h3>
+                                    <div id="call-history" class="bg-gray-50 rounded-lg border border-gray-200 p-4 h-[400px] overflow-y-auto shadow-inner">
+                                        <!-- Call history entries will be added here -->
+                                        <div class="text-gray-400 text-center py-4">
+                                            <i class="fas fa-info-circle mb-2 text-xl"></i>
+                                            <p>Call history will appear here</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/ivr-client.js"></script>
+</body>
+</html> 
